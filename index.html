@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متتبع المهام اليومية</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>متتبع المهام اليومية</h1>
+      <p>تتبع وإدارة المهام والعادات اليومية</p>
+      <button id="dark-mode-toggle"><i class="fas fa-moon"></i></button>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('tasks')">
+        <i class="fas fa-tasks"></i>
+        <span>المهام</span>
+      </div>
+      <div class="tab" onclick="showTab('statistics')">
+        <i class="fas fa-chart-bar"></i>
+        <span>الإحصائيات</span>
+      </div>
+    </div>
+
+    <div id="tasks" class="tab-content active">
+      <div id="task-list"></div>
+    </div>
+
+    <div id="statistics" class="tab-content">
+      <div class="card">
+        <h2>إحصائيات المهام</h2>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-list"></i>
+            </div>
+            <div class="stat-value" id="total-tasks">0</div>
+            <div>إجمالي المهام</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-value" id="completed-today">0</div>
+            <div>منجز اليوم</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-fire"></i>
+            </div>
+            <div class="stat-value" id="longest-streak">0</div>
+            <div>أطول سلسلة</div>
+          </div>
+        </div>
+
+        <div id="task-stats"></div>
+      </div>
+    </div>
+
+    <div class="fab-button" id="add-task-button">
+      <i class="fas fa-plus"></i>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="quick-add" id="quick-add">
+      <div class="quick-add-header">
+        <h2>إضافة مهمة جديدة</h2>
+        <button class="quick-add-close" id="quick-add-close">&times;</button>
+      </div>
+
+      <form id="task-form">
+        <div class="form-group">
+          <label for="task-name">اسم المهمة</label>
+          <input type="text" id="task-name" required placeholder="مثال: الصلاة، قراءة القرآن">
+        </div>
+
+        <div class="form-group">
+          <label for="task-description">وصف المهمة (اختياري)</label>
+          <textarea id="task-description" rows="2" placeholder="أضف وصفاً للمهمة"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>لون المهمة</label>
+          <div class="color-picker" id="color-picker">
+            <div class="color-option selected" style="background-color: #3a7bd5;" data-color="#3a7bd5"></div>
+            <div class="color-option" style="background-color: #38b794;" data-color="#38b794"></div>
+            <div class="color-option" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
+            <div class="color-option" style="background-color: #f5a742;" data-color="#f5a742"></div>
+            <div class="color-option" style="background-color: #8675b2;" data-color="#8675b2"></div>
+            <div class="color-option" style="background-color: #27ae60;" data-color="#27ae60"></div>
+            <div class="color-option" style="background-color: #d35400;" data-color="#d35400"></div>
+            <div class="color-option" style="background-color: #8e44ad;" data-color="#8e44ad"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>أيقونة المهمة</label>
+          <div class="icon-picker" id="icon-picker">
+            <div class="icon-option selected" data-icon="fas fa-pray"><i class="fas fa-pray"></i></div>
+            <div class="icon-option" data-icon="fas fa-book-open"><i class="fas fa-book-open"></i></div>
+            <div class="icon-option" data-icon="fas fa-running"><i class="fas fa-running"></i></div>
+            <div class="icon-option" data-icon="fas fa-apple-alt"><i class="fas fa-apple-alt"></i></div>
+            <div class="icon-option" data-icon="fas fa-heart"><i class="fas fa-heart"></i></div>
+            <div class="icon-option" data-icon="fas fa-brain"><i class="fas fa-brain"></i></div>
+            <div class="icon-option" data-icon="fas fa-pen"><i class="fas fa-pen"></i></div>
+            <div class="icon-option" data-icon="fas fa-dumbbell"><i class="fas fa-dumbbell"></i></div>
+            <div class="icon-option" data-icon="fas fa-bed"><i class="fas fa-bed"></i></div>
+            <div class="icon-option" data-icon="fas fa-water"><i class="fas fa-water"></i></div>
+            <div class="icon-option" data-icon="fas fa-moon"><i class="fas fa-moon"></i></div>
+            <div class="icon-option" data-icon="fas fa-sun"><i class="fas fa-sun"></i></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-type">نوع المهمة</label>
+          <select id="task-type">
+            <option value="daily">يومية</option>
+            <option value="weekly">أسبوعية</option>
+            <option value="custom">مخصصة</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="weekdays-selector" style="display: none;">
+          <label>أيام الأسبوع</label>
+          <div class="weekdays-container">
+            <div class="weekday-option">
+              <input type="checkbox" id="day-sat" value="sat">
+              <label for="day-sat">السبت</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-sun" value="sun">
+              <label for="day-sun">الأحد</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-mon" value="mon">
+              <label for="day-mon">الاثنين</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-tue" value="tue">
+              <label for="day-tue">الثلاثاء</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-wed" value="wed">
+              <label for="day-wed">الأربعاء</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-thu" value="thu">
+              <label for="day-thu">الخميس</label>
+            </div>
+            <div class="weekday-option">
+              <input type="checkbox" id="day-fri" value="fri">
+              <label for="day-fri">الجمعة</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="start-date">تاريخ البدء</label>
+          <input type="date" id="start-date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="end-date">تاريخ الانتهاء (اتركه فارغًا للمهام المستمرة)</label>
+          <input type="date" id="end-date">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="submit-task">
+            <i class="fas fa-plus"></i>
+            <span>إضافة المهمة</span>
+          </button>
+          <button type="button" id="cancel-task" class="btn-cancel">
+            <i class="fas fa-times"></i>
+            <span>إلغاء</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>
